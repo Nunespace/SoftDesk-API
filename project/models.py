@@ -3,7 +3,6 @@ from django.db import models
 from django.conf import settings
 
 
-
 class Project(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -31,18 +30,11 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
-
-   
-        
-
+    
 """
-    def author_is_contributor(self):
-        self.contributors.add(self.request.user.id)
-        print("self.contributors", self.request.user.id)
-
     def save(self, *args, **kwargs):
+        self.contributors = self.author
         super().save(*args, **kwargs)
-        self.author_is_contributor()
 """
 
 
@@ -56,7 +48,7 @@ class Issue(models.Model):
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
-        related_name="issues",
+        related_name="issues", blank=True, null=True
     )
     name = models.CharField(max_length=500, verbose_name="Nom du problème")
     description = models.TextField(
@@ -133,8 +125,11 @@ class Contributor(models.Model):
         related_name="user_contributor"
     )
     project = models.ForeignKey(
-        'project.Project', on_delete=models.CASCADE, related_name="contributors"
+        'project.Project', on_delete=models.CASCADE, related_name="contributors", null=True, blank=True
     )
 
     class Meta:
         unique_together = ("user", "project")
+
+    def __str__(self):
+        return self.user.username

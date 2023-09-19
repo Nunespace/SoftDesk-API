@@ -1,20 +1,21 @@
 from rest_framework import serializers
 from .models import Project, Issue, Comment, Contributor
-#from user.models import User
+
+# from user.models import User
 
 
 class IssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Issue
-        fields = '__all__'
-        
+        fields = "__all__"
+
         read_only_fields = ["author"]
 
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = "__all__"
         read_only_fields = ["author"]
 
     """
@@ -24,31 +25,27 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class ProjectListSerializer(serializers.ModelSerializer):
-   
+    author = serializers.ReadOnlyField(source='author.username')
     class Meta:
         model = Project
-        fields = [
-            "id",
-            "author",
-            "name",
-            "description",
-            "type",
-            "created_time",
-        ]
+        fields = "__all__"
 
     def validate_name(self, value):
         # Nous vérifions que la catégorie existe
         if Project.objects.filter(name=value).exists():
-        # En cas d'erreur, DRF nous met à disposition l'exception ValidationError
-            raise serializers.ValidationError('Ce projet existe déjà')
+            # En cas d'erreur, DRF nous met à disposition l'exception ValidationError
+            raise serializers.ValidationError("Ce projet existe déjà")
         return value
 
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
     # contributors = serializers.StringRelatedField(many=True)
-    contributors = serializers.PrimaryKeyRelatedField(queryset=Contributor.objects.all(), many=True)
+    contributors = serializers.PrimaryKeyRelatedField(
+        queryset=Contributor.objects.all(), many=True
+    )
     issues = IssueSerializer(read_only=True, many=True)
-
+    author = serializers.ReadOnlyField(source='author.username')
+   
     class Meta:
         model = Project
         fields = [
@@ -61,7 +58,7 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
             "issues",
             "created_time",
         ]
-        #read_only_fields = ["author"]
+        #read_only_fields = ["issues"]
 
     """
     def perform_create(self, serializer):
@@ -77,8 +74,8 @@ class ContributorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contributor
 
-        fields = ['id', 'user', 'project']
-    
+        fields = ["id", "user", "project"]
+
     """
     def get_project(self, instance):
         # Le paramètre 'instance' est l'instance de la catégorie consultée.
@@ -92,4 +89,3 @@ class ContributorSerializer(serializers.ModelSerializer):
         # la propriété '.data' est le rendu de notre serializer que nous retournons ici
         return serializer.data
     """
-    
