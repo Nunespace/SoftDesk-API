@@ -21,3 +21,14 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+"""
+Vu ds le quizz 2
+@action(detail=False, methods=['post'])
+
+    def invite(self, request):
+
+        self.send_invitation_email(self.request.POST.get('email'))
+
+        return Response()
+L’action doit être sur la liste puisque l’utilisateur à inviter ne dispose pas de compte et que l’URL le précise (aucun identifiant n’est présent). La méthode à utiliser est POST, et doit être une liste même lorsqu'une seule méthode est utilisée pour l’action.
+"""

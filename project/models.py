@@ -8,7 +8,8 @@ class Project(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name="Auteur",
-        related_name="projets", null=True
+        related_name="projets",
+        null=True,
     )
     name = models.CharField(max_length=500, verbose_name="Nom du projet")
     description = models.TextField(
@@ -21,7 +22,12 @@ class Project(models.Model):
         ANDROID = "Androïd"
 
     type = models.CharField(choices=Type.choices, max_length=10)
-    # contributors = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="projets", verbose_name="Contributeurs")
+    contributors = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="contributions",
+        verbose_name="contributeurs",
+        through="Contributor",
+    )
 
     created_time = models.DateTimeField(auto_now_add=True)
 
@@ -30,7 +36,8 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 """
     def save(self, *args, **kwargs):
         self.contributors = self.author
@@ -43,12 +50,11 @@ class Issue(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name="Auteur",
-        related_name="issue_author", null=True
+        related_name="issue_author",
+        null=True,
     )
     project = models.ForeignKey(
-        Project,
-        on_delete=models.CASCADE,
-        related_name="issues", blank=True, null=True
+        Project, on_delete=models.CASCADE, related_name="issues", blank=True, null=True
     )
     name = models.CharField(max_length=500, verbose_name="Nom du problème")
     description = models.TextField(
@@ -68,7 +74,7 @@ class Issue(models.Model):
         ("FINISHED", "Terminé"),
     ]
 
-    status = models.CharField(choices=STATUS, max_length=15, default="TO_DO")
+    status = models.CharField(choices=STATUS, max_length=15, default="A_faire")
 
     class Priority(models.TextChoices):
         LOW = "Basse"
@@ -92,7 +98,6 @@ class Issue(models.Model):
         return self.name
 
 
-
 class Comment(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -104,7 +109,7 @@ class Comment(models.Model):
     issue = models.ForeignKey(
         Issue,
         on_delete=models.CASCADE,
-        related_name="Comments",
+        related_name="comments",
     )
     description = models.TextField(
         max_length=3000, blank=True, verbose_name="Description"
@@ -114,18 +119,17 @@ class Comment(models.Model):
     class Meta:
         ordering = ["issue"]
 
-    def __str__(self):
-        return self.issue
-
 
 class Contributor(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="user_contributor"
+        related_name="user_contributor",
     )
     project = models.ForeignKey(
-        'project.Project', on_delete=models.CASCADE, related_name="contributors", null=True, blank=True
+        Project,
+        on_delete=models.CASCADE,
+        related_name="contributors_project",
     )
 
     class Meta:

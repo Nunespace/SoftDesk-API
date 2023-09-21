@@ -7,7 +7,7 @@ from project.serializers import ProjectListSerializer
 
 class UserSerializer(ModelSerializer):
     projets = ProjectListSerializer(read_only=True, many=True)
-    #projets = PrimaryKeyRelatedField(read_only=True, many=True, queryset=Project.objects.all())
+    #projets = PrimaryKeyRelatedField(many=True, queryset=Project.objects.all())
 
     
     # à essayer : projets = serializers.PrimaryKeyRelatedField(many=True, queryset=Project.objects.all())
