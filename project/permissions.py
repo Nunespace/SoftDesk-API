@@ -2,14 +2,14 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from rest_framework.permissions import BasePermission
 from rest_framework import permissions
-from project.models import Project, Contributor
+from project.models import Project
 
 
 class IsAdminAuthenticated(BasePermission):
-
+ 
     def has_permission(self, request, view):
-        obj = get_object_or_404()
-        return bool(request.user and request.user.is_authenticated and obj.author == request.user)
+    # Ne donnons l’accès qu’aux utilisateurs administrateurs authentifiés
+        return bool(request.user and request.user.is_authenticated and request.user.is_superuser)
 
 
 
@@ -44,3 +44,27 @@ class IsContributorOrReadOnly(BasePermission):
         return bool(obj.project.contributors.filter(user=request.user).exists())
 """
 
+class ProjectIsAuthenticatedOrAuthorOrReadOnly(BasePermission):
+
+    edit_methods = ("PUT", "PATCH", "DELETE")
+"""
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return True
+"""
+
+    def has_object_permission(self, request, view, obj):
+
+        #if request.method == "POST"
+
+        if request.user.is_superuser:
+            return True
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if obj.author == request.user and request.method in self.edit_methods:
+            return True
+
+        return False
+    

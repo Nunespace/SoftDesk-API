@@ -1,5 +1,4 @@
 from django.db import models
-
 from django.conf import settings
 
 
@@ -24,9 +23,7 @@ class Project(models.Model):
     type = models.CharField(choices=Type.choices, max_length=10)
     contributors = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name="contributions",
-        verbose_name="contributeurs",
-        through="Contributor",
+        related_name="contributors", db_table="Contributor"
     )
 
     created_time = models.DateTimeField(auto_now_add=True)
@@ -36,13 +33,6 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
-
-
-"""
-    def save(self, *args, **kwargs):
-        self.contributors = self.author
-        super().save(*args, **kwargs)
-"""
 
 
 class Issue(models.Model):
@@ -118,22 +108,3 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ["issue"]
-
-
-class Contributor(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="user_contributor",
-    )
-    project = models.ForeignKey(
-        Project,
-        on_delete=models.CASCADE,
-        related_name="contributors_project",
-    )
-
-    class Meta:
-        unique_together = ("user", "project")
-
-    def __str__(self):
-        return self.user.username

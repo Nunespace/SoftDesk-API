@@ -1,28 +1,28 @@
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
-from .models import Project, Issue, Comment, Contributor
-
-
-# from user.models import User
+from .models import Project, Issue, Comment
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    # ref. : https://pypi.org/project/drf-nested-routers/
     parent_lookup_kwargs = {
         'issue_pk': 'issue__pk',
         'project_pk': 'issue__project__pk',
     }
 
+    issue = serializers.ReadOnlyField(source="issue.name")
+
     class Meta:
         model = Comment
-        fields = "__all__"
+        fields = ["id", "author", "issue", "description"]
         read_only_fields = ["author"]
 
     def save(self):
-        issue_id_in_url = self.context["view"].kwargs["project_pk"]
-        issue_object = get_object_or_404(Issue, pk=issue_id_in_url)
+        issue_id_in_url = self.context["view"].kwargs["issue_pk"]
+        issue = get_object_or_404(Issue, pk=issue_id_in_url)
         super().save(
             author=self.context["request"].user,
-            issue=issue_object,
+            issue=issue,
         )
 
 
@@ -34,15 +34,15 @@ class IssueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Issue
-        fields = ["author", "project", "name", "assigned_to", "status", "comments"]
+        fields = ["id", "author", "project", "name", "assigned_to", "status", "comments"]
         read_only_fields = ["author"]
 
     def save(self):
         project_id_in_url = self.context["view"].kwargs["project_pk"]
-        project_object = get_object_or_404(Project, pk=project_id_in_url)
+        project = get_object_or_404(Project, pk=project_id_in_url)
         super().save(
             author=self.context["request"].user,
-            project=project_object,
+            project=project,
         )
 
 
@@ -69,8 +69,7 @@ class ProjectListSerializer(serializers.ModelSerializer):
 
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
-    # contributors = serializers.StringRelatedField(many=True)
-    # contributors = serializers.PrimaryKeyRelatedField(queryset=Contributor.objects.all(), many=True)
+    contributors = serializers.StringRelatedField(many=True)
     issues = IssueSerializer(read_only=True, many=True)
     author = serializers.ReadOnlyField(source="author.username")
 
@@ -86,29 +85,3 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
             "issues",
             "created_time",
         ]
-        # read_only_fields = ["issues"]
-
-
-class ContributorSerializer(serializers.ModelSerializer):
-    # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
-    # user = serializers.StringRelatedField(many=True)
-    # avec get_project .......project = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Contributor
-
-        fields = ["id", "user", "project"]
-
-    """
-    def get_project(self, instance):
-        # Le paramètre 'instance' est l'instance de la catégorie consultée.
-        # Dans le cas d'une liste, cette méthode est appelée autant de fois qu'il y a
-        # d'entités dans la liste
-
-        # On applique le filtre sur notre queryset pour n'avoir que les produits actifs
-        queryset = instance.project.objects.all()
-        # Le serializer est créé avec le queryset défini et toujours défini en tant que many=True
-        serializer = ProjectSerializer(queryset, many=True)
-        # la propriété '.data' est le rendu de notre serializer que nous retournons ici
-        return serializer.data
-    """
