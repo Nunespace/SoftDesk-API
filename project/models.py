@@ -7,7 +7,7 @@ class Project(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name="Auteur",
-        related_name="projets",
+        related_name="projetts",
         null=True,
     )
     name = models.CharField(max_length=500, verbose_name="Nom du projet")
@@ -22,9 +22,7 @@ class Project(models.Model):
 
     type = models.CharField(choices=Type.choices, max_length=10)
     contributors = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name="contributors", db_table="Contributor"
-    )
+        settings.AUTH_USER_MODEL, related_name="project", db_table="Contributor")
 
     created_time = models.DateTimeField(auto_now_add=True)
 

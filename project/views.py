@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from project.permissions import ProjectIsAuthenticatedOrAuthorOrReadOnly, IsAuthorOrReadOnly, IsContributorOrReadOnly
+from rest_framework.viewsets import ModelViewSet  # ReadOnlyModelViewSet
+from rest_framework.permissions import IsAuthenticated
+from project.permissions import IsAuthorOrReadOnly, IsContributorOrReadOnly
 from .models import Project, Issue, Comment
 from .serializers import (
     ProjectListSerializer,
@@ -17,7 +17,7 @@ class ProjectViewSet(ModelViewSet):
     serializer_class = ProjectListSerializer
     # attribut de classe qui permet de définir le serializer de détail
     detail_serializer_class = ProjectDetailSerializer
-    permission_classes = [IsAuthenticated, ProjectIsAuthenticatedOrAuthorOrReadOnly]
+    permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
 
     def get_serializer_class(self):
         # Si l'action demandée est retrieve nous retournons le serializer de détail
@@ -38,12 +38,13 @@ class ProjectViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         """L'utilisateur qui crée le projet en est l'auteur"""
+        #self.contributors.add(self.author.id)
         serializer.save(author=self.request.user)
 
 
 class IssueViewSet(ModelViewSet):
     serializer_class = IssueSerializer
-    permission_classes = [IsAuthenticated, IsContributorOrReadOnly]
+    permission_classes = [IsContributorOrReadOnly]
 
     def get_queryset(self):
         return Issue.objects.filter(project=self.kwargs["project_pk"])

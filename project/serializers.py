@@ -37,16 +37,26 @@ class IssueSerializer(serializers.ModelSerializer):
         fields = ["id", "author", "project", "name", "assigned_to", "status", "comments"]
         read_only_fields = ["author"]
 
+    def validate_assigned_to(self, value):
+        project_id_in_url = self.context["view"].kwargs["project_pk"]
+        project = get_object_or_404(Project, pk=project_id_in_url)
+        if value not in project.contributors.all():
+            raise serializers.ValidationError("Cet utilisateur n'est pas un contributeur de ce projet")
+        print("project.contributors : ", project.contributors.all())
+        return value
+
     def save(self):
         project_id_in_url = self.context["view"].kwargs["project_pk"]
         project = get_object_or_404(Project, pk=project_id_in_url)
         super().save(
             author=self.context["request"].user,
+            assigned_to=self.context['request'].user,
             project=project,
         )
 
 
 class ProjectListSerializer(serializers.ModelSerializer):
+
     author = serializers.ReadOnlyField(source="author.username")
 
     class Meta:
