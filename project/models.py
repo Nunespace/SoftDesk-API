@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.conf import settings
 
@@ -7,7 +8,7 @@ class Project(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name="Auteur",
-        related_name="projetts",
+        related_name="projets",
         null=True,
     )
     name = models.CharField(max_length=500, verbose_name="Nom du projet")
@@ -87,6 +88,7 @@ class Issue(models.Model):
 
 
 class Comment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) 
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

@@ -30,16 +30,15 @@ class UserDetailSerializer(ModelSerializer):
         Retourne : une version hachée du mot de passe
         """
         return make_password(value)
-    
+
+
 class UserListSerializer(ModelSerializer):
     projets = StringRelatedField(read_only=True, many=True)
-  
 
     class Meta:
         model = User
         fields = [
             "id",
             "username",
-            "projets",
-
+            "projets"
         ]

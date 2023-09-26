@@ -6,7 +6,9 @@ from django.core.validators import MinValueValidator
 
 class User(AbstractUser):
     
+    #  l’âge légal pour donner son consentement seul est de 15 ans
     age = models.PositiveIntegerField(validators=[MinValueValidator(15)], default=44)
+    # l’utilisateur peut donner ou non son consentement pour être contacté ou partager ses données personnelles.
     can_be_contacted = models.BooleanField(default=False)
     can_be_shared = models.BooleanField(default=False)
 
