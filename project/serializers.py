@@ -50,8 +50,7 @@ class IssueSerializer(serializers.ModelSerializer):
         project = get_object_or_404(Project, pk=project_id_in_url)
         super().save(
             author=self.context["request"].user,
-            assigned_to=self.context['request'].user,
-            project=project,
+            project=project
         )
 
 
@@ -65,9 +64,7 @@ class ProjectListSerializer(serializers.ModelSerializer):
             "id",
             "author",
             "name",
-            "description",
             "type",
-            "contributors"
         ]
 
     def validate_name(self, value):
@@ -79,7 +76,6 @@ class ProjectListSerializer(serializers.ModelSerializer):
 
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
-    contributors = serializers.StringRelatedField(many=True)
     issues = IssueSerializer(read_only=True, many=True)
     author = serializers.ReadOnlyField(source="author.username")
 

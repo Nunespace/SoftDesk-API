@@ -54,7 +54,7 @@ class Issue(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Attribué à ",
         related_name="issue_assigned_to",
-        null=True,
+        blank=True, null=True
     )
 
     STATUS = [
