@@ -37,6 +37,13 @@ class IssueSerializer(serializers.ModelSerializer):
         fields = ["id", "author", "project", "name", "assigned_to", "status", "comments"]
         read_only_fields = ["author"]
 
+    def validate_name(self, value):
+        # vérifie si le projet existe déjà
+        if Issue.objects.filter(name=value).exists():
+            # En cas d'erreur, DRF nous met à disposition l'exception ValidationError
+            raise serializers.ValidationError("Ce problème existe déjà")
+        return value
+    
     def validate_assigned_to(self, value):
         project_id_in_url = self.context["view"].kwargs["project_pk"]
         project = get_object_or_404(Project, pk=project_id_in_url)
@@ -46,11 +53,13 @@ class IssueSerializer(serializers.ModelSerializer):
         return value
 
     def save(self):
+        print("save?")
         project_id_in_url = self.context["view"].kwargs["project_pk"]
-        project = get_object_or_404(Project, pk=project_id_in_url)
+        project_id = get_object_or_404(Project, pk=project_id_in_url)
+        print("eeee", self.context["request"])
         super().save(
             author=self.context["request"].user,
-            project=project
+            project=project_id
         )
 
 

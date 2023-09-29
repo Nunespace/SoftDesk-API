@@ -21,13 +21,10 @@ class IsAuthorProject(BasePermission):
             return True
 
         # L'utilisateur connecté peut voir la liste des projets ou créer un projet et en devient l'auteur (http://127.0.0.1:8000/api/projects/)
-        if (
-            project_id is None
-            and id_in_url is None
-            and request.method == "POST"
-            or request.method == "GET"
-        ):
-            return True
+        if project_id is None and id_in_url is None:
+            if request.method == "POST" or request.method == "GET":
+                print("l'utilisateur authentifié est autorisé à créer un projet ou voir la liste des projets non détaillée")
+                return True
 
         # Seul l'auteur d'un projet peut le modifier ou le supprimer (http://127.0.0.1:8000/api/projects/<id>/)
         if project_id is None and id_in_url is not None:
@@ -40,47 +37,6 @@ class IsAuthorProject(BasePermission):
             )
             return bool(request.user and request.user == author)
 
-        print("La permission n'est pas accordée")
-        return False
-
-
-class IsContributor(BasePermission):
-    edit_methods = "POST"
-
-    def has_permission(self, request, view):
-        print("IsContributor : has_permission executée")
-        project_id = view.kwargs.get("pk")
-
-        if request.user.is_superuser:
-            print("Permission accordée au Superutilisateur")
-            return True
-
-        if project_id is not None:
-            project = Project.objects.get(pk=project_id)
-            contributors = project.contributors.all()
-            print(f"Les contributeurs du projet n°{project_id} sont : {contributors}")
-            print(
-                "L'utilisateur en fait-il parti?",
-                bool(
-                    request.user
-                    and request.user.is_authenticated
-                    and request.user in contributors
-                ),
-            )
-            return bool(
-                request.user
-                and request.user.is_authenticated
-                and request.user in contributors
-            )
-        print("La permission n'est pas accordée")
-        return False
-
-    def has_object_permission(self, request, view, obj):
-        print("IsContributor : has_object_permission executée")
-
-        if request.user.is_superuser:
-            print("Permission accordée au Superutilisateur")
-            return True
         print("La permission n'est pas accordée")
         return False
 
@@ -188,6 +144,70 @@ class IsAuthorComment(BasePermission):
                 "L'utilisateur est-il l'auteur du commentaire?",
                 bool(obj.author == request.user),
             )
+            return True
+
+        print("La permission n'est pas accordée")
+        return False
+
+class IsContributor(BasePermission):
+    edit_methods = "POST"
+
+    def has_permission(self, request, view):
+        print("IsContributor : has_permission executée")
+        project_id = view.kwargs.get("project_pk")
+        id_in_url = view.kwargs.get("pk")
+        print("N° projet : ", project_id)
+        print("id in url : ", id_in_url)
+
+        if request.user.is_superuser:
+            print("Permission accordée au Superutilisateur")
+            return True
+
+        if project_id is not None:
+            project = Project.objects.get(pk=project_id)
+            contributors = project.contributors.all()
+            print(f"Les contributeurs du projet n°{project_id} sont : {contributors}")
+
+            print(
+                f"L'utilisateur {request.user} en fait-il parti?",
+                bool(
+                    request.user
+                    and request.user.is_authenticated
+                    and request.user in contributors
+                ),
+            )
+            return bool(
+                request.user
+                and request.user.is_authenticated
+                and request.user in contributors
+            )
+        if project_id is None and id_in_url is not None:
+            project = Project.objects.get(pk=id_in_url)
+            contributors = project.contributors.all()
+            print(f"Les contributeurs du projet n°{id_in_url} sont : {contributors}")
+            print(
+                "L'utilisateur en fait-il parti?",
+                bool(
+                    request.user
+                    and request.user.is_authenticated
+                    and request.user in contributors
+                ),
+            )
+            return request.user in contributors
+
+        print("La permission n'est pas accordée")
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        print("IsContributor : has_object_permission executée")
+        print("Cible url : ", obj)
+
+        if request.user.is_superuser:
+            print("Permission accordée au Superutilisateur")
+            return True
+
+        if request.method in permissions.SAFE_METHODS:
+            print("Safe method?", request.method in permissions.SAFE_METHODS)
             return True
 
         print("La permission n'est pas accordée")

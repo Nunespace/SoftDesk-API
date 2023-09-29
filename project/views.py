@@ -56,12 +56,13 @@ class IssueViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Issue.objects.filter(project=self.kwargs["project_pk"])
-
-
 """
     def perform_create(self, serializer):
-        L'utilisateur qui crée le problème (issue) en est l'auteur
-        serializer.save(author=self.request.user) 
+        assigned_to = self.request.GET.get("assigned_to")
+        print("ee", assigned_to)
+        serializer.save(author=self.request.user)
+        if assigned_to is None:
+            serializer.save(assigned_to=self.request.user)
 """
 
 

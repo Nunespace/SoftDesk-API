@@ -34,6 +34,7 @@ class Project(models.Model):
         return self.name
 
 
+
 class Issue(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -51,10 +52,10 @@ class Issue(models.Model):
     )
     assigned_to = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         verbose_name="Attribué à ",
         related_name="issue_assigned_to",
-        blank=True, null=True
+        null=True
     )
 
     STATUS = [

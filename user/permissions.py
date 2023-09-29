@@ -6,36 +6,29 @@ from project.models import Project
 
 
 class IsSuperUserOrReadOnly(BasePermission):
-
     edit_methods = ("PUT", "PATCH", "DELETE")
 
     def has_permission(self, request, view):
-        # Seul le super utilisateur peut créer un utilisateur
+        id_in_url = view.kwargs.get("pk")
+        print("id in url", id_in_url)
+        # Seul le super utilisateur peut accéder à la liste des utilisateurs, au détail d'un utilisateur, créer, modifier ou supprimer un utilisateur
         if request.user.is_superuser:
-            print("isSuperUser")
             return True
 
-        if request.method in permissions.SAFE_METHODS and request.user.is_authenticated:
-            print("if Safemethod")
-            return True
-        
-        if request.method in self.edit_methods and request.user.is_authenticated:
+        if id_in_url is not None and request.user.is_authenticated:
             print("EditMethod")
             return True
 
-        print("else!!")
+        return False
 
     def has_object_permission(self, request, view, obj):
-
         if request.user.is_superuser:
             print("PermAuteursuperuser")
             return True
-        if request.method in permissions.SAFE_METHODS:
-            ("permAuteuriSafemeth")
-            return True
-        # un utilisateur peut modifier ou supprimer ses données (RGPD : droit à l’accès et à la rectification et droit à l'oubli)
-        if obj == request.user and request.method in self.edit_methods:
+
+        # un utilisateur peut lire,  modifier ou supprimer ses données (RGPD : droit à l’accès et à la rectification et droit à l'oubli)
+        if obj == request.user:
             print("permAuteurObjAuthor", obj, "request.user: ", request.user)
             return True
-        print("???")
+
         return False
