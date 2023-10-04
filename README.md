@@ -66,7 +66,7 @@ Cependant, dans le cadre du RGPD, un utilisateur authentifié peut lire, modifie
 
 - `token/`en précisant dans le corp (body) de la réquête deux clés (key) : *username* et *password*, permet d'obtenir une paire de jeton d'identification (token) : - un **access_token**  qui va permettre de vérifier l’identité et les droits de l’utilisateur. Sa durée de vie est limitée dans le temps ;
           - un **refresh_token**  qui va permettre d’obtenir une nouvelle paire de tokens une fois que l’ access_token  sera expiré.
-![Alt text](image-1.png)
+![Alt text](docs/capture_postman.png)
 
 - `token/refresh/` en précisant dans le corp (body) de la réquête la clé (key) *refresh* avec comme valeur (value) le jeton précédent, pour obtenir un nouvel **access_token** une fois que le jeton précédent est expiré.
 
