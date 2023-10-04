@@ -2,7 +2,7 @@
 
 ***
 Cette API RESTful permet de traiter les données nécessaires pour remonter et suivre des problèmes techniques au sein des des entreprises.
-Ces informations peuvent être consultées ou modifiées à partir d'urls interrogeables à l'aide d'un client HTTP graphique comme Postman.
+Ces informations peuvent être consultées ou modifiées à partir de requêtes HTTP côté client à l'aide d'une interface graphique comme Postman.
 
 ## Fonctionnalités de l'application
 
@@ -23,7 +23,7 @@ Cette API exécutable localement peut être installée en suivant les étapes d�
 git clone https://github.com/Nunespace/SoftDesk-API.git
 ```
 
-Vous pouvez également télécharger le code en temps qu'archive zip : [Projet_LITRevu](https://github.com/Nunespace/SoftDesk-API/archive/refs/heads/main.zip)
+Vous pouvez également télécharger le code en temps qu'archive zip : [Projet_API_SoftDesk.zip](https://github.com/Nunespace/SoftDesk-API/archive/refs/heads/main.zip)
 
 2. Placez-vous dans le répertoire SoftDesk-API :
 
@@ -64,14 +64,42 @@ Cependant, dans le cadre du RGPD, un utilisateur authentifié peut lire, modifie
 
 #### Obtention des token d'accès
 
-- `token/` : 
+- `token/`en précisant dans le corp (body) de la réquête deux clés (key) : *username* et *password*, permet d'obtenir une paire de jeton d'identification (token) : - un **access_token**  qui va permettre de vérifier l’identité et les droits de l’utilisateur. Sa durée de vie est limitée dans le temps ;
+          - un **refresh_token**  qui va permettre d’obtenir une nouvelle paire de tokens une fois que l’ access_token  sera expiré.
+![Alt text](image-1.png)
+
+- `token/refresh/` en précisant dans le corp (body) de la réquête la clé (key) *refresh* avec comme valeur (value) le jeton précédent, pour obtenir un nouvel **access_token** une fois que le jeton précédent est expiré.
+
 
 #### Gestion des utilisateurs
 
-- `users/` , le super utilisateur peut créer un utilisateur ou voir la liste des utilisateurs
+- `users/` : le super utilisateur peut créer un utilisateur ou voir la liste des utilisateurs
+
 - `users/:user_id/`[^1], le super utilisateur ou un utilisateur authentifié, s'il s'agit de lui, peut consulter, modifier ou supprimer un compte
 
-[^1]: On utilise  :user_id  pour matérialiser l’ID de l’utilisateur, c’est ce qu’on appelle un placeholder. En pratique, avec un ID réel, le path ressemblerait plutôt à ça :  `users/14/`
+
+
+#### Gestion des projets (Project)
+
+- `projects/`, un utilisateur authentifié peut créer un projet (POST) ou consulter (GET) la liste des projets non détaillés.
+- `projects/:project_id/`[^1] le superutilisateur ou l'auteur d'un projet peut consulter son détail (GET), le modifier(PATCH) ou le supprimer(DELETE).
+- `projects/?author_id=:user_id`[^1] : un utilisateur authentifié peut consulter (GET) la liste des projets non détaillés d'un utilisateur.
+
+### Créations des tâches et des problèmes (Issue)
+
+- `projects/:project_id/issues/`[^1] : le superutilisateur, l'auteur ou les contributeurs d'un projet peuvent consulter (GET) la liste de ses problèmes ou créer (POST) un problème lié à celui-ci.
+- `projects/:project_id/issues/:issue_id/`[^1] : ces mêmes utilisateurs peuvent consulter (GET) le détail d'un problème de ce projet. En revanche, seul l'auteur du problème ou le superutilisateur peut le modifier (PATCH) ou le supprimer (DELETE.)
+
+### Créations des commentaires (Comment)
+
+- `projects/:project_id/issues/:issue_id/comments/`[^1] : le superutilisateur, l'auteur ou les contributeurs d'un projet peuvent consulter (GET) la liste des commentaires d'un problème ou créer (POST) un commentaire lié à celui-ci.
+- `projects/:project_id/issues/:issue_id/comments/:comment_id`[^1][^2]  : ces mêmes utilisateurs peuvent consulter (GET) le détail d'un commentaire de ce problème. En revanche, seul l'auteur du commentaire ou le superutilisateur peut le modifier (PATCH) ou le supprimer (DELETE.)
+
+[^1]: *:user_id*  ou *:project_id*  ou *:issue_id* ou *:comment_id* matérialise l’ID de l’utilisateur, d'un projet, un problème ou un commentaire (placeholder). En pratique, avec un ID réel, le path serait par exemple :  `http://127.0.0.1:8000/api/users/14/` ou `http://127.0.0.1:8000/api/projects/4/issues/3/`
+
+[^2]: l'id d'un commentaire est un UUID (Universally Unique IDentifier, littéralement un identifiant unique universel).
+Exemple : http://127.0.0.1:8000/api/projects/4/issues/5/comments/976dcfb9-fd3a-4337-8f53-e32b157a589a/
+
 
 ## Administration du site
 

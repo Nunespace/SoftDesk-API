@@ -3,7 +3,6 @@ from rest_framework import permissions
 from project.models import Project
 
 
-
 class IsAuthorProject(BasePermission):
     edit_methods = ("PUT", "PATCH", "DELETE")
 
@@ -22,7 +21,7 @@ class IsAuthorProject(BasePermission):
         if project_id is None and id_in_url is None:
             if request.method == "POST" or request.method == "GET":
                 print(
-                 "l'utilisateur authentifié est autorisé à créer un projet ou voir la liste des projets non détaillée"
+                    "l'utilisateur authentifié est autorisé à créer un projet ou voir la liste des projets non détaillée"
                 )
                 return True
 
@@ -49,8 +48,8 @@ class IsAuthorIssue(BasePermission):
         project_id = view.kwargs.get("project_pk")
         issue_id = view.kwargs.get("issue_pk")
         id_in_url = view.kwargs.get("pk")
-        print("N° projet : ", project_id)
-        print("N° du problème (issue) : ", issue_id)
+        print("Id projet : ", project_id)
+        print("Id du problème (issue) : ", issue_id)
         print("id in url : ", id_in_url)
 
         if request.user.is_superuser:
@@ -77,7 +76,7 @@ class IsAuthorIssue(BasePermission):
     def has_object_permission(self, request, view, obj):
         print("IsAuthorIssue : has_object_permission executée")
         print(
-            f"L'auteur du problème n°{obj.id} du projet n°{view.kwargs.get('project_pk')} est {obj.author}"
+            f"L'auteur du problème id_n°{obj.id} du projet id_n°{view.kwargs.get('project_pk')} est {obj.author}"
         )
 
         if request.user.is_superuser:
@@ -161,6 +160,9 @@ class IsContributor(BasePermission):
         id_in_url = view.kwargs.get("pk")
         print("N° projet : ", project_id)
         print("id in url : ", id_in_url)
+        project = Project.objects.get(pk=project_id)
+        author_project = project.author
+        print("l'auteur du projet est :", author_project)
 
         if request.user.is_superuser:
             print("Permission accordée au Superutilisateur")
@@ -173,29 +175,26 @@ class IsContributor(BasePermission):
 
             print(
                 f"L'utilisateur {request.user} en fait-il parti?",
-                bool(
-                    request.user
-                    and request.user.is_authenticated
-                    and request.user in contributors
-                ),
+                request.user in contributors,
             )
-            return bool(
-                request.user
-                and request.user.is_authenticated
-                and request.user in contributors
-            )
+            if request.user in contributors:
+                return True
+
+        if project_id is not None:
+            project = Project.objects.get(pk=project_id)
+            author_project = project.author
+            print("l'auteur du projet est :", author_project)
+            if author_project == request.user:
+                print(
+                    f"L'auteur du projet id_n°{project_id} est : {author_project}. L'auteur étant contributeur, la permission est accordée."
+                )
+            return bool(author_project == request.user)
+
         if project_id is None and id_in_url is not None:
             project = Project.objects.get(pk=id_in_url)
             contributors = project.contributors.all()
             print(f"Les contributeurs du projet n°{id_in_url} sont : {contributors}")
-            print(
-                "L'utilisateur en fait-il parti?",
-                bool(
-                    request.user
-                    and request.user.is_authenticated
-                    and request.user in contributors
-                ),
-            )
+            print("L'utilisateur en fait-il parti?", request.user in contributors)
             return request.user in contributors
 
         print("La permission n'est pas accordée")
