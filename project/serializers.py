@@ -6,8 +6,8 @@ from .models import Project, Issue, Comment
 class CommentSerializer(serializers.ModelSerializer):
     # ref. : https://pypi.org/project/drf-nested-routers/
     parent_lookup_kwargs = {
-        'issue_pk': 'issue__pk',
-        'project_pk': 'issue__project__pk',
+        "issue_pk": "issue__pk",
+        "project_pk": "issue__project__pk",
     }
 
     issue = serializers.ReadOnlyField(source="issue.name")
@@ -34,37 +34,45 @@ class IssueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Issue
-        fields = ["id", "author", "project", "name", "assigned_to", "status", "comments"]
+        fields = [
+            "id",
+            "author",
+            "project",
+            "name",
+            "priority",
+            "tag",
+            "assigned_to",
+            "status",
+            "comments",
+        ]
         read_only_fields = ["author"]
 
     def validate_name(self, value):
-        # vérifie si le projet existe déjà
+        """vérifie si le problème existe déjà"""
         if Issue.objects.filter(name=value).exists():
             # En cas d'erreur, DRF nous met à disposition l'exception ValidationError
             raise serializers.ValidationError("Ce problème existe déjà")
         return value
-    
+
     def validate_assigned_to(self, value):
         project_id_in_url = self.context["view"].kwargs["project_pk"]
         project = get_object_or_404(Project, pk=project_id_in_url)
+        print(value)
+        print("l'auteur du projet est : ", project.author)
         if value not in project.contributors.all():
-            raise serializers.ValidationError("Cet utilisateur n'est pas un contributeur de ce projet")
+            if value != project.author:
+                raise serializers.ValidationError("Cet utilisateur n'est pas un contributeur ou l'auteur de ce projet")
         print("project.contributors : ", project.contributors.all())
         return value
 
     def save(self):
-        print("save?")
         project_id_in_url = self.context["view"].kwargs["project_pk"]
         project_id = get_object_or_404(Project, pk=project_id_in_url)
         print("eeee", self.context["request"])
-        super().save(
-            author=self.context["request"].user,
-            project=project_id
-        )
+        super().save(author=self.context["request"].user, project=project_id)
 
 
 class ProjectListSerializer(serializers.ModelSerializer):
-
     author = serializers.ReadOnlyField(source="author.username")
 
     class Meta:
@@ -79,7 +87,6 @@ class ProjectListSerializer(serializers.ModelSerializer):
     def validate_name(self, value):
         # vérifie si le projet existe déjà
         if Project.objects.filter(name=value).exists():
-            # En cas d'erreur, DRF nous met à disposition l'exception ValidationError
             raise serializers.ValidationError("Ce projet existe déjà")
         return value
 

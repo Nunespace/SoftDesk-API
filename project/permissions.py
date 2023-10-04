@@ -1,9 +1,7 @@
-from django.shortcuts import get_object_or_404
-from django.db.models import Q
 from rest_framework.permissions import BasePermission
 from rest_framework import permissions
-from project.models import Project, Issue
-from user.models import User
+from project.models import Project
+
 
 
 class IsAuthorProject(BasePermission):
@@ -20,10 +18,12 @@ class IsAuthorProject(BasePermission):
             print("Permission accordée au Superutilisateur")
             return True
 
-        # L'utilisateur connecté peut voir la liste des projets ou créer un projet et en devient l'auteur (http://127.0.0.1:8000/api/projects/)
+        # L'utilisateur connecté peut voir la liste des projets ou créer un projet (il en devient l'auteur) avec l'url : http://127.0.0.1:8000/api/projects/
         if project_id is None and id_in_url is None:
             if request.method == "POST" or request.method == "GET":
-                print("l'utilisateur authentifié est autorisé à créer un projet ou voir la liste des projets non détaillée")
+                print(
+                 "l'utilisateur authentifié est autorisé à créer un projet ou voir la liste des projets non détaillée"
+                )
                 return True
 
         # Seul l'auteur d'un projet peut le modifier ou le supprimer (http://127.0.0.1:8000/api/projects/<id>/)
@@ -57,8 +57,8 @@ class IsAuthorIssue(BasePermission):
             print("Permission accordée au Superutilisateur")
             return True
 
-        # L'auteur d'un projet peut créer un problème (issue) (http://127.0.0.1:8000/api/projects/<project_id>/issues)
-        # Il devient aussi auteur du problème
+        # L'auteur d'un projet peut créer un problème (issue) avec l'url : http://127.0.0.1:8000/api/projects/:project_id/issues
+        # (il en devient l'auteur)
         if id_in_url is None:
             project = Project.objects.get(pk=project_id)
             author = project.author
@@ -95,6 +95,7 @@ class IsAuthorIssue(BasePermission):
         print("La permission n'est pas accordée")
         return False
 
+
 class IsAuthorComment(BasePermission):
     edit_methods = ("PUT", "PATCH", "DELETE")
 
@@ -111,8 +112,9 @@ class IsAuthorComment(BasePermission):
             print("Permission accordée au Superutilisateur")
             return True
 
-        # L'auteur d'un projet peut créer un commentaire  (http://127.0.0.1:8000/api/projects/<project_id>/issues/<issue_id>)
-        # Il devient aussi auteur du problème
+        # L'auteur du projet peut créer un commentaire avec l'url : http://127.0.0.1:8000/api/projects/<project_id>/issues/:issue_id
+        # (il en devient l'auteur)
+        # NB : l'auteur du problème peut aussi créer un commentaire dans le cadre de la permission IsContributor
         if id_in_url is None:
             project = Project.objects.get(pk=project_id)
             author = project.author
@@ -148,6 +150,7 @@ class IsAuthorComment(BasePermission):
 
         print("La permission n'est pas accordée")
         return False
+
 
 class IsContributor(BasePermission):
     edit_methods = "POST"
@@ -210,5 +213,7 @@ class IsContributor(BasePermission):
             print("Safe method?", request.method in permissions.SAFE_METHODS)
             return True
 
-        print("La permission n'est pas accordée")
+        print(
+            "La permission n'est pas accordée : le contributeur n'est pas l'auteur de la ressource."
+        )
         return False

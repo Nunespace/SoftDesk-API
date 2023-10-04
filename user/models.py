@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 
 
-
 class User(AbstractUser):
     
     #  l’âge légal pour donner son consentement seul est de 15 ans

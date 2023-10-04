@@ -22,6 +22,7 @@ class Project(models.Model):
         ANDROID = "Androïd"
 
     type = models.CharField(choices=Type.choices, max_length=10)
+    # le modèle Project est lié au modèle User avec la table intermédiaire créée par défaut par Django et renommée "Contributor"
     contributors = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name="project", db_table="Contributor")
 
@@ -32,7 +33,6 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
-
 
 
 class Issue(models.Model):
@@ -66,19 +66,21 @@ class Issue(models.Model):
 
     status = models.CharField(choices=STATUS, max_length=15, default="A_faire")
 
-    class Priority(models.TextChoices):
-        LOW = "Basse"
-        MEDIUM = "Moyenne"
-        HIGH = "Haute"
+    PRIORITY = [
+        ("LOW", "Basse"),
+        ("MEDIUM", "Moyenne"),
+        ("HIGH", "Haute"),
+    ]
 
-    priority = models.CharField(choices=Priority.choices, max_length=15)
+    priority = models.CharField(choices=PRIORITY, max_length=15)
 
-    class Tag(models.TextChoices):
-        BUG = "Bug"
-        FEATURE = "Fonctionnalité"
-        TASK = "Tâche"
+    TAG = [
+        ("BUG", "Bug"),
+        ("FEATURE", "Fonctionnalité"),
+        ("TASK", "Tâche"),
+    ]
 
-    tag = models.CharField(choices=Tag.choices, max_length=15)
+    tag = models.CharField(choices=TAG, max_length=15)
     created_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -96,7 +98,6 @@ class Comment(models.Model):
         verbose_name="Auteur",
         related_name="comment_author",
     )
-    # uuid : [PK]
     issue = models.ForeignKey(
         Issue,
         on_delete=models.CASCADE,

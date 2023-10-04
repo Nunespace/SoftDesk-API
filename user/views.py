@@ -12,7 +12,6 @@ class UserViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsSuperUserOrReadOnly]
 
     def get_serializer_class(self):
-        # Si l'action demandée est retrieve nous retournons le serializer de détail
         if (
             self.action == "retrieve"
             or self.action == "update"
@@ -20,7 +19,4 @@ class UserViewSet(ModelViewSet):
             or self.action == "destroy"
         ):
             return self.detail_serializer_class
-        # dans tous les autres cas, retourne serializer par défaut
         return super().get_serializer_class()
-
-
