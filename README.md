@@ -51,7 +51,7 @@ Les étapes 1 à 3 ne sont requises que pour l'installation initiale. Pour les l
 Selon les besoins de l'utilisateur, les requêtes HTTP utilisent les méthodes **GET** pour obtenir des données, **POST** pour en créer, **PATCH** pour les modifier ou **DELETE** pour les supprimer.
 
 Seuls les utilisateurs authentifiés peuvent accéder aux différentes ressources et seul l'administrateur de l'API (super-utilisateur) peur créer un utilisateur. Pour créer un super-utilisateur : voir *Administration du site / 1.Créer votre accès super-utilisateur* ci-dessous. 
-Les différentes permissions sont récapitulées [sur cette page](docs/permissions.pdf).
+Les différentes permissions sont récapitulées [sur ce tableau](docs/permissions.pdf).
 
 [Postman](https://www.postman.com/) peut être utilisé pou tester l'API : [télécharger Postman](https://www.getpostman.com/downloads/).
 
@@ -74,7 +74,7 @@ Les points de terminaison pour obtenir une paire de jeton d'identification avec 
     - un **access_token**  qui va permettre de vérifier l’identité et les droits de l’utilisateur. Sa durée de vie est limitée dans le temps ;
     - un **refresh_token**  qui va permettre d’obtenir une nouvelle paire de tokens une fois que l’ access_token  sera expiré.
 
-![capture-écran Postman: obtention de token](docs/capture_postman.png)
+![capture-écran Postman: obtention de token](Docs/capture_postman.png)
 
 - `token/refresh/` en précisant dans le corp (body) de la réquête la clé (key) *refresh* avec comme valeur (value) le jeton précédent, pour obtenir un nouvel **access_token** une fois que le jeton précédent est expiré.
 
