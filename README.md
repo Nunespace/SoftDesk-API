@@ -74,7 +74,7 @@ Les points de terminaison pour obtenir une paire de jeton d'identification avec 
     - un **access_token**  qui va permettre de vérifier l’identité et les droits de l’utilisateur. Sa durée de vie est limitée dans le temps ;
     - un **refresh_token**  qui va permettre d’obtenir une nouvelle paire de tokens une fois que l’ access_token  sera expiré.
 
-![capture-écran Postman: obtention de token](docs\capture_postman.png)
+![capture-écran Postman: obtention de token](Docs\capture_postman.png)
 
 - `token/refresh/` en précisant dans le corp (body) de la réquête la clé (key) *refresh* avec comme valeur (value) le jeton précédent, pour obtenir un nouvel **access_token** une fois que le jeton précédent est expiré.
 
