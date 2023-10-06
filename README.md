@@ -15,7 +15,7 @@ L’API présente quatre fonctionnalités principales :
 
 ## Installation
 
-Cette API exécutable localement peut être installée en suivant les étapes décrites ci-dessous. L'API aura besoin de Python, Git et Pipenv pour fonctionner. Si besoin, vous pouvez les installer en suivant les instructions sur [cette page](Docs\installation_python-git-pipenv.md).
+Cette API exécutable localement peut être installée en suivant les étapes décrites ci-dessous. L'API aura besoin de Python, Git et Pipenv pour fonctionner. Si besoin, vous pouvez les installer en suivant les instructions sur [cette page](Docs/installation_python-git-pipenv.md).
 
 1. Ouvrez le terminal et tapez :
 
