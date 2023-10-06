@@ -10,6 +10,7 @@ class User(AbstractUser):
     # l’utilisateur peut donner ou non son consentement pour être contacté ou partager ses données personnelles.
     can_be_contacted = models.BooleanField(default=False)
     can_be_shared = models.BooleanField(default=False)
+    REQUIRED_FIELDS = ["age", "can_be_contacted", "can_be_shared"]
 
     def __str__(self):
         return self.username
