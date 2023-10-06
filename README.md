@@ -26,7 +26,6 @@ git clone https://github.com/Nunespace/SoftDesk-API.git
 Vous pouvez également télécharger le dossier en temps qu'archive zip : [Projet_API_SoftDesk.zip](https://github.com/Nunespace/SoftDesk-API/archive/refs/heads/main.zip)
 
 2. Placez-vous dans le répertoire SoftDesk-API :
-
 ```
 CD SoftDesk-API
 ou
@@ -34,30 +33,41 @@ CD chemin .../SoftDesk-API
 ```
 
 3. Installez les dépendances du projet :
-
 ```
 pipenv install
 ```
 
-4. Démarrer le serveur avec : 
+4 . Exécuter les migrations avec cette commande :
+```
+pipenv run python manage.py migrate
+```
+5. Créer votre accès super-utilisateur en tapant :
+
+```
+pipenv python manage.py createsuperuser
+```
+<sub>puis suivez les instructions après avoir choisi un identifiant(username) et un mot de passe : Voir la [documentation officielle de Django](https://docs.djangoproject.com/fr/4.2/topics/auth/default/) si besoin.
+
+6. Démarrer le serveur avec : 
 ```
 pipenv run python manage.py runserver
 ```
 
-Les étapes 1 à 3 ne sont requises que pour l'installation initiale. Pour les lancements ultérieurs du serveur de l'API, il suffit d'exécuter l'étape 4 à partir du répertoire racine du projet.
+Les étapes 1 à 5 ne sont requises que pour l'installation initiale. Pour les lancements ultérieurs du serveur de l'API, il suffit d'exécuter l'étape 5 à partir du répertoire racine du projet.
 
 ## Documentation sur l'API REST SoftDesk
 
 Selon les besoins de l'utilisateur, les requêtes HTTP utilisent les méthodes **GET** pour obtenir des données, **POST** pour en créer, **PATCH** pour les modifier ou **DELETE** pour les supprimer.
 
-Seuls les utilisateurs authentifiés peuvent accéder aux différentes ressources et seul l'administrateur de l'API (super-utilisateur) peur créer un utilisateur. Pour créer un super-utilisateur : voir *Administration du site / 1.Créer votre accès super-utilisateur* ci-dessous. 
+Seuls les utilisateurs authentifiés peuvent accéder aux différentes ressources et seul l'administrateur de l'API (super-utilisateur) peur créer un utilisateur.
 Les différentes permissions sont récapitulées [sur ce tableau](Docs/permissions.pdf).
 
 [Postman](https://www.postman.com/) peut être utilisé pou tester l'API : [télécharger Postman](https://www.getpostman.com/downloads/).
 
 L'API peut alors être interrogée à partir des points de terminaison (endpoints) commençant par l'url de base **[http://127.0.0.1:8000/api/](http://127.0.0.1:8000/api/)**. Le point de terminaison central permettant de consulter la liste des projets est [http://127.0.0.1:8000/api/projects/](http://127.0.0.1:8000/api/projects/).
 
-
+> [!NOTE]
+> Des exemples de requêtes et réponses sont disponibles à [cette adresse](https://documenter.getpostman.com/view/27427921/2s9YJdUh8f).
 
 ### Authentification
 
@@ -124,15 +134,7 @@ Exemple : http://127.0.0.1:8000/api/projects/4/issues/5/comments/976dcfb9-fd3a-4
 
 Les données de l'API peuvent être administrées par le super-utilisateur avec [le site d'administration de Django](http://127.0.0.1:8000/admin/).
 
-1. **Créer votre accès super-utilisateur** en tapant :
-
-```
-python manage.py createsuperuser
-```
-
-<sub>puis suivez les instructions après avoir choisi un identifiant(username) et un mot de passe : Voir la [documentation officielle de Django](https://docs.djangoproject.com/fr/4.2/topics/auth/default/) si besoin.
-
-2. Après avoir démarrer le serveur local (voir *Installation/4 ci-dessus*), taper l'url suivante dans votre navigateur : <http://127.0.0.1:8000/admin/>
+1. Après avoir démarrer le serveur local (voir *Installation/6 ci-dessus*), taper l'url suivante dans votre navigateur : <http://127.0.0.1:8000/admin/>
 
 
-3. Entrer votre identifiant et votre mot de passe pour accéder au site d'administration de Django : ce site permet de gérer toutes les opérations [CRUD](https://openclassrooms.com/fr/courses/7172076-debutez-avec-le-framework-django/7516605-effectuez-des-operations-crud-dans-ladministration-de-django) sur les ressources de l'API.
+2. Entrer votre identifiant et votre mot de passe pour accéder au site d'administration de Django : ce site permet de gérer toutes les opérations [CRUD](https://openclassrooms.com/fr/courses/7172076-debutez-avec-le-framework-django/7516605-effectuez-des-operations-crud-dans-ladministration-de-django) sur les ressources de l'API.
