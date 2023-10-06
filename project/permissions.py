@@ -160,9 +160,11 @@ class IsContributor(BasePermission):
         id_in_url = view.kwargs.get("pk")
         print("N° projet : ", project_id)
         print("id in url : ", id_in_url)
+        """
         project = Project.objects.get(pk=project_id)
         author_project = project.author
         print("l'auteur du projet est :", author_project)
+        """
 
         if request.user.is_superuser:
             print("Permission accordée au Superutilisateur")

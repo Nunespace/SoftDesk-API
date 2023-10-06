@@ -7,16 +7,11 @@ from user.permissions import IsSuperUserOrReadOnly
 
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserListSerializer
-    detail_serializer_class = UserDetailSerializer
+    list_serializer_class = UserListSerializer
+    serializer_class = UserDetailSerializer
     permission_classes = [IsAuthenticated, IsSuperUserOrReadOnly]
 
     def get_serializer_class(self):
-        if (
-            self.action == "retrieve"
-            or self.action == "update"
-            or self.action == "partial_update"
-            or self.action == "destroy"
-        ):
-            return self.detail_serializer_class
+        if self.action == "list":
+            return self.list_serializer_class
         return super().get_serializer_class()

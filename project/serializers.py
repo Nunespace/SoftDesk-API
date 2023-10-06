@@ -58,17 +58,14 @@ class IssueSerializer(serializers.ModelSerializer):
         project_id_in_url = self.context["view"].kwargs["project_pk"]
         project = get_object_or_404(Project, pk=project_id_in_url)
         print(value)
-        print("l'auteur du projet est : ", project.author)
         if value not in project.contributors.all():
             if value != project.author:
                 raise serializers.ValidationError("Cet utilisateur n'est pas un contributeur ou l'auteur de ce projet")
-        print("project.contributors : ", project.contributors.all())
         return value
 
     def save(self):
         project_id_in_url = self.context["view"].kwargs["project_pk"]
         project_id = get_object_or_404(Project, pk=project_id_in_url)
-        print("eeee", self.context["request"])
         super().save(author=self.context["request"].user, project=project_id)
 
 
