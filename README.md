@@ -51,7 +51,7 @@ Les étapes 1 à 3 ne sont requises que pour l'installation initiale. Pour les l
 Selon les besoins de l'utilisateur, les requêtes HTTP utilisent les méthodes **GET** pour obtenir des données, **POST** pour en créer, **PATCH** pour les modifier ou **DELETE** pour les supprimer.
 
 Seuls les utilisateurs authentifiés peuvent accéder aux différentes ressources et seul l'administrateur de l'API (super-utilisateur) peur créer un utilisateur. Pour créer un super-utilisateur : voir *Administration du site / 1.Créer votre accès super-utilisateur* ci-dessous. 
-Les différentes permissions sont récapitulées [sur ce tableau](docs/permissions.pdf).
+Les différentes permissions sont récapitulées [sur ce tableau](Docs/permissions.pdf).
 
 [Postman](https://www.postman.com/) peut être utilisé pou tester l'API : [télécharger Postman](https://www.getpostman.com/downloads/).
 
