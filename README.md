@@ -44,7 +44,7 @@ pipenv run python manage.py migrate
 5. Créer votre accès super-utilisateur en tapant :
 
 ```
-pipenv python manage.py createsuperuser
+pipenv run python manage.py createsuperuser
 ```
 <sub>puis suivez les instructions après avoir choisi un identifiant(username) et un mot de passe : Voir la [documentation officielle de Django](https://docs.djangoproject.com/fr/4.2/topics/auth/default/) si besoin.
 
